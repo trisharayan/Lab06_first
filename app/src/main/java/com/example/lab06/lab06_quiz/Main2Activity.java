@@ -3,13 +3,17 @@ package com.example.lab06.lab06_quiz;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.Random;
 
@@ -22,12 +26,32 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     private String answer;
     private int questionLength = question.questions.length;
 
-    Random random;
+    public static SharedPreferences sharedpreferences ;
 
+    Random random;
+    int score=0;
+    int highscore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+
+        sharedpreferences = getSharedPreferences("mypre",Context.MODE_PRIVATE);
+
+
+
+
+        highscore =sharedpreferences.getInt("highscore",0);
+        Gson gson = new Gson();
+        String json = gson.toJson(highscore);
+
+        TextView high = (TextView) findViewById(R.id.textView);
+        high.setText("Highscore: "+json);
+
+        TextView cscore = (TextView) findViewById(R.id.textView2);
+        cscore.setText("Current score: "+score);
+
 
         random = new Random();
 
@@ -49,11 +73,20 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+
+
+
         switch (v.getId()){
             case R.id.btn_one:
                 if(btn_one.getText() == answer){
                     Toast.makeText(Main2Activity.this, "You Are Correct", Toast.LENGTH_SHORT).show();
                     NextQuestion(random.nextInt(questionLength));
+                    score+=1;
+
+                    TextView cscore = (TextView) findViewById(R.id.textView2);
+                    cscore.setText("Current score: "+score);
+
+                    updateHighScore();
                 }else{
                     GameOver();
                 }
@@ -64,6 +97,12 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 if(btn_two.getText() == answer){
                     Toast.makeText(Main2Activity.this, "You Are Correct", Toast.LENGTH_SHORT).show();
                     NextQuestion(random.nextInt(questionLength));
+                    score+=1;
+
+                    TextView cscore = (TextView) findViewById(R.id.textView2);
+                    cscore.setText("Current score: "+score);
+
+                    updateHighScore();
                 }else{
                     GameOver();
                 }
@@ -74,6 +113,12 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 if(btn_three.getText() == answer){
                     Toast.makeText(Main2Activity.this, "You Are Correct", Toast.LENGTH_SHORT).show();
                     NextQuestion(random.nextInt(questionLength));
+                    score+=1;
+
+                    TextView cscore = (TextView) findViewById(R.id.textView2);
+                    cscore.setText("Current score: "+score);
+
+                    updateHighScore();
                 }else{
                     GameOver();
                 }
@@ -84,6 +129,12 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
                 if(btn_four.getText() == answer){
                     Toast.makeText(Main2Activity.this, "You Are Correct", Toast.LENGTH_SHORT).show();
                     NextQuestion(random.nextInt(questionLength));
+                    score+=1;
+
+                    TextView cscore = (TextView) findViewById(R.id.textView2);
+                    cscore.setText("Current score: "+score);
+
+                    updateHighScore();
                 }else{
                     GameOver();
                 }
@@ -121,6 +172,19 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         btn_four.setText(question.getchoice4(num));
 
         answer = question.getCorrectAnswer(num);
+    }
+
+
+    private void updateHighScore(){
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        if(score>highscore){
+            highscore=score;
+            TextView high = (TextView) findViewById(R.id.textView);
+            high.setText("Highscore: "+highscore);
+            editor.putInt("highscore",highscore);
+            editor.apply();
+        }
+
     }
 
 }
